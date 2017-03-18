@@ -4,7 +4,7 @@ MAINTAINER David Personette <dperson@gmail.com>
 # Install tor and privoxy
 RUN export DEBIAN_FRONTEND='noninteractive' && \
     apt-get update && \
-    apt-get install -y procps --install-suggests && \
+    apt-get install -y gnupg procps --install-suggests && \
     apt-key adv --keyserver pgp.mit.edu --recv-keys \
                 A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 && \
     /bin/echo -n "deb http://deb.torproject.org/torproject.org stretch main" \
