@@ -3,15 +3,15 @@ MAINTAINER David Personette <dperson@gmail.com>
 
 # Install tor and privoxy
 RUN export DEBIAN_FRONTEND='noninteractive' && \
-    apt-get update -qq && \
-    apt-get install -qqy --no-install-recommends gnupg1 procps && \
+    apt-get update && \
+    apt-get install -y procps --install-suggests && \
     apt-key adv --keyserver pgp.mit.edu --recv-keys \
                 A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 && \
     /bin/echo -n "deb http://deb.torproject.org/torproject.org stretch main" \
                 >>/etc/apt/sources.list && \
-    apt-get update -qq && \
-    apt-get install -qqy --no-install-recommends privoxy tor tor-geoipdb \
-                $(apt-get -s dist-upgrade|awk '/^Inst.*ecurity/ {print $2}') &&\
+    apt-get update && \
+    apt-get install -y --install-suggests privoxy tor tor-geoipdb && \
+    apt-get dist-upgrade -y --install-suggests &&\
     sed -i 's|^\(accept-intercepted-requests\) .*|\1 1|' /etc/privoxy/config &&\
     sed -i 's|^\([^#]*\)127.0.0.1:8118|\10.0.0.0:8118|' /etc/privoxy/config && \
     sed -i 's|^\([^#]*\)\[::1\]:8118|\1[::]:8118|' /etc/privoxy/config && \
