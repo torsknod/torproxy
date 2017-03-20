@@ -28,6 +28,15 @@ bandwidth() { local kbs="${1:-10}" file=/etc/tor/torrc
     echo "RelayBandwidthBurst $(( kbs * 2 )) KB" >>$file
 }
 
+### socks_bind_address: set the socks bind address
+# Arguments:
+#   IP address to bind to
+# Return: Updated configuration file
+socks_bind_address() { local socks_bind_address="$1" file=/etc/tor/torrc
+    sed -i '/^SocksBindAddress/d' $file
+    echo "SocksBindAddress $socks_bind_address" >>$file
+}
+
 ### exitnode: Allow exit traffic
 # Arguments:
 #   N/A)
@@ -83,6 +92,7 @@ usage() { local RC=${1:-0}
     echo "Usage: ${0##*/} [-opt] [command]
 Options (fields in '[]' are optional, '<>' are required):
     -h          This help
+    -a \"<address>\" Configure socks bind address
     -b \"\"       Configure tor relaying bandwidth in KB/s
                 possible arg: \"[number]\" - # of KB/s to allow
     -e          Allow this to be an exit node for tor traffic
@@ -104,6 +114,7 @@ The 'command' (if provided and valid) will be run instead of torproxy
 while getopts ":hb:el:s:t:" opt; do
     case "$opt" in
         h) usage ;;
+        a) socks_bind_address "$OPTARG" ;;
         b) bandwidth "$OPTARG" ;;
         e) exitnode ;;
         l) exitnode_country "$OPTARG" ;;
@@ -115,6 +126,7 @@ while getopts ":hb:el:s:t:" opt; do
 done
 shift $(( OPTIND - 1 ))
 
+[[ "${SOCKS_BIND_ADDRESS:-""}" ]] && socks_bind_address "$SOCKS_BIND_ADDRESS"
 [[ "${BW:-""}" ]] && bandwidth "$BW"
 [[ "${EXITNODE:-""}" ]] && exitnode
 [[ "${LOCATION:-""}" ]] && exitnode_country "$LOCATION"
