@@ -32,18 +32,34 @@ bandwidth() { local kbs="${1:-10}" file=/etc/tor/torrc
 # Arguments:
 #   IP address to listen on
 # Return: Updated configuration file
-socks_listen_address() { local socks_listen_address="$1" file=/etc/tor/torrc
+socks_listen_address() { local socks_listen_addresses="$1" file=/etc/tor/torrc
     sed -i '/^SocksListenAddress/d' $file
-    echo "SocksListenAddress $socks_listen_address" >>$file
+    for socks_listen_address_or_name in $socks_listen_addresses; do
+        socks_listen_ipv4_addresses="$(getent ahostsv4 ""$socks_listen_address_or_name"" | grep STREAM | cut -d' ' -f1)"
+        socks_listen_ipv6_addresses="$(getent ahostsv6 ""$socks_listen_address_or_name"" | grep STREAM | cut -d' ' -f1)"
+        for socks_listen_address in $socks_listen_ipv4_addresses $socks_listen_ipv6_addresses; do
+            if [ -n "$socks_listen_address" ]; then
+                echo "SocksListenAddress $socks_listen_address" >>$file
+            fi
+        done
+    done
 }
 
 ### outbound_bind_address: set the outbound bind address
 # Arguments:
 #   IP address to bind to
 # Return: Updated configuration file
-outbound_bind_address() { local outbound_bind_address="$1" file=/etc/tor/torrc
+outbound_bind_address() { local outbound_bind_addresses="$1" file=/etc/tor/torrc
     sed -i '/^OutboundBindAddress/d' $file
-    echo "OutboundBindAddress $outbound_bind_address" >>$file
+    for outbound_bind_address_or_name in $outbound_bind_addresses; do
+        outbound_bind_ipv4_addresses="$(getent ahostsv4 ""$outbound_bind_address_or_name"" | grep STREAM | cut -d' ' -f1)"
+        outbound_bind_ipv6_addresses="$(getent ahostsv6 ""$outbound_bind_address_or_name"" | grep STREAM | cut -d' ' -f1)"
+        for outbound_bind_address in $outbound_bind_ipv4_addresses $outbound_bind_ipv6_addresses; do
+            if [ -n "$outbound_bind_address" ]; then
+                echo "OutboundBindAddress $outbound_bind_address" >>$file
+            fi
+        done
+    done
 }
 
 ### exitnode: Allow exit traffic
