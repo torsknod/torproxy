@@ -73,7 +73,7 @@ RUN export DEBIAN_FRONTEND='noninteractive' && \
     echo 'RelayBandwidthBurst 20 KB' >>/etc/tor/torrc && \
     echo 'VirtualAddrNetworkIPv4 10.192.0.0/10' >>/etc/tor/torrc && \
     echo 'DNSPort 5353' >>/etc/tor/torrc && \
-    echo 'SocksPort 9050 IsolateDestAddr' >>/etc/tor/torrc && \
+    echo 'SocksPort 9050' >>/etc/tor/torrc && \
     echo 'TransPort 9040' >>/etc/tor/torrc && \
     mkdir -p /etc/tor/run && \
     chown -Rh debian-tor. /var/lib/tor /etc/tor/run && \
