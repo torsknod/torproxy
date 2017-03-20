@@ -121,7 +121,7 @@ The 'command' (if provided and valid) will be run instead of torproxy
     exit $RC
 }
 
-while getopts ":hb:el:s:t:" opt; do
+while getopts ":ho:a:b:el:s:t:" opt; do
     case "$opt" in
         h) usage ;;
         o) outbound_bind_address "$OPTARG" ;;
