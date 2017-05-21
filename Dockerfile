@@ -13,10 +13,11 @@ RUN export DEBIAN_FRONTEND='noninteractive' && \
     apt-get install -y privoxy tor tor-geoipdb && \
     apt-get dist-upgrade -y &&\
     sed -i 's|^\(accept-intercepted-requests\) .*|\1 1|' /etc/privoxy/config &&\
-    sed -i 's|^\([^#]*\)127.0.0.1:8118|\10.0.0.0:8118|' /etc/privoxy/config && \
-    sed -i 's|^\([^#]*\)\[::1\]:8118|\1[::]:8118|' /etc/privoxy/config && \
-    sed -i 's|^\(logdir\) .*|\1 /dev|' /etc/privoxy/config && \
-    sed -i 's|^\(logfile\) .*|\1 stdout|' /etc/privoxy/config && \
+    sed -i '/^listen/s|127\.0\.0\.1||' /etc/privoxy/config && \
+    sed -i '/^listen.*::1/s|^|#|' /etc/privoxy/config && \
+    sed -i 's|^\(logfile\)|#\1|' /etc/privoxy/config && \
+    sed -i 's|^#\(log-messages\)|\1|' /etc/privoxy/config && \
+    sed -i 's|^#\(log-highlight-messages\)|\1|' /etc/privoxy/config && \
     sed -i '/forward *localhost\//a forward-socks5t / 127.0.0.1:9050 .' \
                 /etc/privoxy/config && \
     sed -i '/^forward-socks5t \//a forward 172.16.*.*/ .' /etc/privoxy/config&&\
